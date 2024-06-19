@@ -1,6 +1,14 @@
-import { Container, Heading, Text, VStack, Box, Image, Link } from "@chakra-ui/react";
+import { Container, Heading, Text, VStack, Box, Image, Link, Button } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 
 const Index = () => {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const storedPosts = JSON.parse(localStorage.getItem("posts")) || [];
+    setPosts(storedPosts);
+  }, []);
   return (
     <Container centerContent maxW="container.md" py={10}>
       <VStack spacing={8}>
@@ -13,9 +21,20 @@ const Index = () => {
         <Text fontSize="lg" textAlign="center">
           Hi there! I'm a passionate writer and this is my personal blog where I share my thoughts, experiences, and stories. Stay tuned for more updates!
         </Text>
-        <Link href="#latest-posts" color="teal.500" fontSize="lg">
-          Check out my latest posts
-        </Link>
+        <Button as={RouterLink} to="/add-post" colorScheme="teal" size="lg">
+          Add New Post
+        </Button>
+        <VStack spacing={4} align="stretch" width="100%" id="latest-posts">
+          {posts.map((post, index) => (
+            <Box key={index} p={5} shadow="md" borderWidth="1px" borderRadius="md">
+              <Heading fontSize="xl">{post.title}</Heading>
+              <Text mt={4}>{post.content}</Text>
+              <Text mt={4} fontSize="sm" color="gray.500">
+                {new Date(post.date).toLocaleString()}
+              </Text>
+            </Box>
+          ))}
+        </VStack>
       </VStack>
     </Container>
   );
